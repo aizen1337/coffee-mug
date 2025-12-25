@@ -1,0 +1,33 @@
+# Stage 1: Build the Vite frontend
+FROM node:20-alpine AS build
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies
+COPY package*.json tsconfig.json config.ts eslint.config.ts ./
+COPY src ./src
+COPY scripts ./scripts
+COPY config ./config
+COPY tests ./tests
+
+RUN npm install
+RUN npm run build
+
+# Stage 2: Serve with Node.js
+FROM node:20-alpine AS production
+
+WORKDIR /app
+
+# Copy package.json and install only production deps
+COPY package*.json ./
+RUN npm install --omit=dev
+
+# Copy build output from the previous stage
+COPY --from=build /app/dist ./dist
+
+# Expose port
+EXPOSE 3000
+
+# Start the app (assuming an Express or similar server)
+CMD ["node", "dist/server.js"]

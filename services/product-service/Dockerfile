@@ -5,7 +5,7 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 # Install dependencies
-COPY package*.json tsconfig.json config.ts eslint.config.ts ./
+COPY package*.json tsconfig.json tsconfig.prod.json config.ts eslint.config.ts ./
 COPY src ./src
 COPY scripts ./scripts
 COPY config ./config
@@ -18,16 +18,16 @@ RUN npm run build
 FROM node:20-alpine AS production
 
 WORKDIR /app
-
 # Copy package.json and install only production deps
 COPY package*.json ./
 RUN npm install --omit=dev
 
 # Copy build output from the previous stage
 COPY --from=build /app/dist ./dist
+COPY --from=build /app/config ./dist/config
 
 # Expose port
 EXPOSE 3000
 
 # Start the app (assuming an Express or similar server)
-CMD ["node", "dist/server.js"]
+CMD ["npm", "start"]

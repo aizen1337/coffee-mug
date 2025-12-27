@@ -1,27 +1,61 @@
 import logger from 'jet-logger';
-
 import ENV from '@src/common/constants/ENV';
 import server from './server';
+import { startOrderCreatedConsumer } from './consumers/OrderCreated';
+import mongoose from 'mongoose';
 
+/******************************************************************************/
+/*                                Constants                                   */
+/******************************************************************************/
 
-/******************************************************************************
-                                Constants
-******************************************************************************/
+const SERVER_START_MSG = `Express server started on port: ${ENV.Port}`;
 
-const SERVER_START_MSG = (
-  'Express server started on port: ' + ENV.Port.toString()
-);
+/******************************************************************************/
+/*                                  Run                                       */
+/******************************************************************************/
 
+const startServer = async () => {
+  try {
+    logger.info('Starting server...');
 
-/******************************************************************************
-                                  Run
-******************************************************************************/
+    // Start Express server
+    await new Promise<void>((resolve, reject) => {
+      server.listen(ENV.Port, (err: unknown) => {
+        if (err) return
+        logger.info(`Express server listening on port ${ENV.Port}`);
+        resolve();
+      });
+    });
 
-// Start the server
-server.listen(ENV.Port, err => {
-  if (!!err) {
-    logger.err(err.message);
-  } else {
+    // Connect to MongoDB
+    try {
+      logger.info('Connecting to MongoDB...');
+      // eslint-disable-next-line n/no-process-env
+      await mongoose.connect(process.env.MONGODB_URI!);
+      logger.info('MongoDB connected successfully');
+    } catch (err: unknown) {
+      logger.err('MongoDB connection failed:');
+      console.error(err);
+      throw err; // Stop startup if DB fails
+    }
+
+    // Start Kafka consumer
+    try {
+      logger.info('Starting OrderCreated Kafka consumer...');
+      await startOrderCreatedConsumer();
+      logger.info('Kafka consumer started successfully');
+    } catch (err: unknown) {
+      logger.err('Kafka consumer failed to start:');
+      console.error(err);
+      throw err; // Stop startup if consumer fails
+    }
+
     logger.info(SERVER_START_MSG);
+  } catch (err: unknown) {
+    logger.err('Server startup failed:');
+    console.error(err);
   }
-});
+};
+
+// Run the startup sequence
+startServer();

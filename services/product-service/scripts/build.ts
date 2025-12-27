@@ -14,9 +14,9 @@ import { copy, copyFilesRec, exec, remove } from './common/utils';
     await remove('./dist/');
     await exec('npm run lint', '../');
     await exec('tsc --project tsconfig.prod.json', '../');
-    // Copy
+    await exec('tsc-alias --project tsconfig.prod.json', '../');   
     await copyFilesRec('./src', './dist', ['.ts']);
-    await copy('./temp/config.js', './config.js');
+    await copy('./temp/config.js', './dist/config.js');
     await copy('./temp/src', './dist');
     await remove('./temp/');
   } catch (err) {

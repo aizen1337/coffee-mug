@@ -7,7 +7,7 @@
     "dev": "NODE_ENV=development ts-node ./src",
     "dev:hot": "nodemon --exec \"npm run dev\" --watch ./src --ext .ts",
     "lint": "eslint .",
-    "start": "NODE_ENV=production node -r ./config.js ./dist",
+    "start": "NODE_ENV=production node -r ./dist/config.js ./dist",
     "test": "NODE_ENV=test vitest",
     "type-check": "tsc -b --noEmit"
   },
@@ -29,7 +29,8 @@
     "kafkajs": "^2.2.4",
     "module-alias": "^2.2.3",
     "mongoose": "^9.0.2",
-    "morgan": "^1.10.1"
+    "morgan": "^1.10.1",
+    "tsc-alias": "^1.8.16"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

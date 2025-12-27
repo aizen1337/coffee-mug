@@ -6,7 +6,7 @@ import moduleAlias from 'module-alias';
 
 
 // Check the env
-const NODE_ENV = (process.env.NODE_ENV ?? 'development');
+const NODE_ENV = (process.env.NODE_ENV ?? 'production');
 
 // Configure "dotenv"
 const result2 = dotenv.config({
@@ -18,5 +18,5 @@ if (result2.error) {
 
 // Configure moduleAlias
 if (__filename.endsWith('js')) {
-  moduleAlias.addAlias('@src', __dirname + '/dist');
+  moduleAlias.addAlias('@src', path.resolve(__dirname, 'dist'));
 }

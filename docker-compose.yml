@@ -43,20 +43,23 @@ services:
     volumes:
       - product-db-data:/data/db
 
-  # order-service:
-  #   build: ./services/order-service
-  #   ports:
-  #     - "3002:3000"
-  #   env_file:
-  #     - ./services/order-service/.env
-  #   depends_on:
-  #     - kafka
-  #     - order-db
+  order-service:
+    build: ./services/order-service
+    ports:
+      - "3002:3000"
+    env_file:
+      - ./services/order-service/.env.production
+    environment:
+      KAFKAJS_NO_PARTITIONER_WARNING: "1"
+      NODE_ENV: production
 
-  # order-db:
-  #   image: mongo:7
-  #   volumes:
-  #     - order-db-data:/data/db
+    depends_on:
+      - kafka
+      - order-db
+  order-db:
+    image: mongo:7
+    volumes:
+      - order-db-data:/data/db
 
 volumes:
   product-db-data:

@@ -44,11 +44,12 @@ services:
       - product-db-data:/data/db
 
   order-service:
+    container_name: order-service
     build: ./services/order-service
     ports:
       - "3002:3000"
     env_file:
-      - ./services/order-service/.env.production
+      - ./services/order-service/config/.env.production
     environment:
       KAFKAJS_NO_PARTITIONER_WARNING: "1"
       NODE_ENV: production
@@ -57,7 +58,10 @@ services:
       - kafka
       - order-db
   order-db:
+    container_name: order-db
     image: mongo:7
+    ports:
+      - "27019:27018"
     volumes:
       - order-db-data:/data/db
 

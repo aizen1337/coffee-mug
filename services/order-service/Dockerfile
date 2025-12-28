@@ -27,7 +27,7 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/config ./dist/config
 
 # Expose port
-EXPOSE 3000
+EXPOSE 3002
 
 # Start the app (assuming an Express or similar server)
 CMD ["npm", "start"]

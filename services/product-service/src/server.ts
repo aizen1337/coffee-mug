@@ -53,7 +53,7 @@ app.use((err: Error, _: Request, res: Response, _next: NextFunction) => {
     res.status(err.status).json({
       error: err.message,
     });
-    return; // ⬅️ CRITICAL
+    return; 
   }
 
   res.status(HTTP_STATUS_CODES.InternalServerError).json({

@@ -3,8 +3,7 @@ import { producer } from '@src/lib/kafka';
 import HTTP_STATUS_CODES from '@src/common/constants/HTTP_STATUS_CODES';
 import { RouteError } from '@src/common/util/route-errors';
 import { CreateOrderInput } from '@src/types/CreateOrderInput';
-
-
+import { calculateFinalOrderPrice } from '@src/domain/pricing/CalculateFinalPrice';
 
 export const createOrder = async (input: CreateOrderInput) => {
   if (!input.items.length) {
@@ -14,10 +13,15 @@ export const createOrder = async (input: CreateOrderInput) => {
     );
   }
 
+  const totalPrice = calculateFinalOrderPrice(input.items, {
+    location: input.customer.location,
+    orderDate: new Date(),
+  });
+
   const order = await OrderModel.create({
     status: 'PENDING',
     items: input.items,
-    totalPrice: 0, // will be recalculated later
+    totalPrice,
   });
 
   await producer.send({
@@ -27,6 +31,7 @@ export const createOrder = async (input: CreateOrderInput) => {
         value: JSON.stringify({
           orderId: order.id,
           products: input.items,
+          totalPrice,
         }),
       },
     ],

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as productCommandController from '@src/controllers/ProductCommandController';
+import * as productTypeCommandController from '@src/controllers/ProductTypeCommandController';
 import * as productQueryController from '@src/controllers/ProductQueryController';
 import {
   validateCreateProduct,
@@ -16,19 +16,19 @@ router.get('/products', productQueryController.list);
 router.post(
   '/products',
   validateCreateProduct,
-  productCommandController.create,
+  productTypeCommandController.create,
 );
 
 router.post(
   '/products/:id/restock',
   validateStockChange,
-  productCommandController.restock,
+  productTypeCommandController.restock,
 );
 
 router.post(
   '/products/:id/sell',
   validateStockChange,
-  productCommandController.sell,
+  productTypeCommandController.sell,
 );
 
 export default router;

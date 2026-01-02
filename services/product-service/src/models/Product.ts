@@ -1,13 +1,13 @@
+// src/models/Product.ts
 import { Schema, model } from 'mongoose';
 
-export const ProductSchema = new Schema(
-  {
-    name: { type: String, required: true, maxlength: 50 },
-    description: { type: String, required: true, maxlength: 50 },
-    price: { type: Number, required: true, min: 0.01 },
-    stock: { type: Number, required: true, min: 0 },
+const ProductSchema = new Schema({
+  productTypeId: {
+    type: Schema.Types.ObjectId,
+    ref: 'ProductType',
+    required: true,
+    index: true,
   },
-  { timestamps: true },
-);
+});
 
 export const ProductModel = model('Product', ProductSchema);

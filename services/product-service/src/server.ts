@@ -1,18 +1,17 @@
-import morgan from 'morgan';
-import path from 'path';
-import helmet from 'helmet';
-import express, { Request, Response, NextFunction } from 'express';
-import logger from 'jet-logger';
+import morgan from "morgan";
+import path from "path";
+import helmet from "helmet";
+import express, { Request, Response, NextFunction } from "express";
+import logger from "jet-logger";
 
-import BaseRouter from '@src/routes';
+import BaseRouter from "@src/routes";
 
-import Paths from '@src/common/constants/PATHS';
-import ENV from '@src/common/constants/ENV';
-import HTTP_STATUS_CODES from '@src/common/constants/HTTP_STATUS_CODES';
-import { RouteError } from '@src/common/util/route-errors';
-import { NODE_ENVS } from '@src/common/constants';
-import { requestLogger } from '@src/middleware/requestLogger';
-
+import Paths from "@src/common/constants/PATHS";
+import ENV from "@src/common/constants/ENV";
+import HTTP_STATUS_CODES from "@src/common/constants/HTTP_STATUS_CODES";
+import { RouteError } from "@src/common/util/route-errors";
+import { NODE_ENVS } from "@src/common/constants";
+import { requestLogger } from "@src/middleware/requestLogger";
 
 /******************************************************************************
                                 Setup
@@ -20,16 +19,15 @@ import { requestLogger } from '@src/middleware/requestLogger';
 
 const app = express();
 
-
 // **** Middleware **** //
 
 // Basic middleware
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-app.use(requestLogger)
+app.use(express.urlencoded({ extended: true }));
+app.use(requestLogger);
 // Show routes called in console during development
 if (ENV.NodeEnv === NODE_ENVS.Dev) {
-  app.use(morgan('dev'));
+  app.use(morgan("dev"));
 }
 
 // Security
@@ -53,14 +51,13 @@ app.use((err: Error, _: Request, res: Response, _next: NextFunction) => {
     res.status(err.status).json({
       error: err.message,
     });
-    return; 
+    return;
   }
 
   res.status(HTTP_STATUS_CODES.InternalServerError).json({
-    error: 'Internal Server Error',
+    error: "Internal Server Error",
   });
 });
-
 
 /******************************************************************************
                                 Export default

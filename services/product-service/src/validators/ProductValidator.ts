@@ -1,34 +1,48 @@
-import Joi from 'joi';
-import { Request, Response, NextFunction } from 'express';
+// src/validators/ProductValidator.ts
+import Joi, { ValidationResult } from 'joi';
+import { RequestHandler } from 'express';
 import HTTP_STATUS_CODES from '@src/common/constants/HTTP_STATUS_CODES';
-
-const createProductSchema = Joi.object({
-  name: Joi.string().max(50).required(),
-  description: Joi.string().max(50).required(),
-  price: Joi.number().positive().required(),
-  stock: Joi.number().integer().min(0).required(),
-});
-
-const stockChangeSchema = Joi.object({
-  amount: Joi.number().integer().positive().required(),
-});
+import {
+  CreateProductTypeBody,
+  RestockProductTypeBody,
+} from '@src/types/ProductTypeRequests';
 
 const validate =
-  (schema: Joi.ObjectSchema) =>
-    (req: Request, res: Response, next: NextFunction) => {
-      const { error } = schema.validate(req.body, {
+  <TBody>(schema: Joi.ObjectSchema): RequestHandler<object, unknown, TBody> =>
+    (req, res, next) => {
+      const result: ValidationResult<TBody> = schema.validate(req.body, {
         abortEarly: false,
+        stripUnknown: true,
       });
 
-      if (error) {
-        return res.status(HTTP_STATUS_CODES.BadRequest).json({
+      if (result.error) {
+        res.status(HTTP_STATUS_CODES.BadRequest).json({
           message: 'Validation failed',
-          details: error.details.map(d => d.message),
+          details: result.error.details.map(d => d.message),
         });
+        return;
       }
 
+      req.body = result.value;
       next();
     };
 
-export const validateCreateProduct = validate(createProductSchema);
-export const validateStockChange = validate(stockChangeSchema);
+/* ---------- Schemas ---------- */
+
+const createProductTypeSchema = Joi.object<CreateProductTypeBody>({
+  name: Joi.string().trim().max(50).required(),
+  category: Joi.string().trim().max(50).required(),
+  price: Joi.number().positive().required(),
+});
+
+const stockChangeSchema = Joi.object<RestockProductTypeBody>({
+  amount: Joi.number().integer().positive().required(),
+});
+
+/* ---------- Exports ---------- */
+
+export const validateCreateProduct =
+  validate<CreateProductTypeBody>(createProductTypeSchema);
+
+export const validateStockChange =
+  validate<RestockProductTypeBody>(stockChangeSchema);

@@ -1,6 +1,7 @@
+import { Location, OrderItem } from "@src/domain/pricing/types";
+
 export interface CreateOrderInput {
-  items: {
-    productId: string;
-    quantity: number;
-  }[];
+  customer: string;
+  items: OrderItem[];
+  location: Location;
 }

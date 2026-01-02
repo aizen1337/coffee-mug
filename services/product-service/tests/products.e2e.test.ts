@@ -7,10 +7,10 @@ import { ProductTypeModel } from '@src/models/ProductType';
 import { ProductModel } from '@src/models/Product';
 
 describe('ProductType API', () => {
-  describe('POST /products', () => {
+  describe('POST /api/products', () => {
     it('creates a product type', async () => {
       const res = await request(app)
-        .post('/products')
+        .post('/api/products')
         .send({
           name: 'Coffee',
           category: 'BEVERAGE',
@@ -26,7 +26,7 @@ describe('ProductType API', () => {
 
     it('fails validation for invalid payload', async () => {
       const res = await request(app)
-        .post('/products')
+        .post('/api/products')
         .send({
           name: '',
           price: -5,
@@ -38,7 +38,7 @@ describe('ProductType API', () => {
     });
   });
 
-  describe('GET /products', () => {
+  describe('GET /api/products', () => {
     it('returns product types with available stock', async () => {
       const type = await ProductTypeModel.create({
         name: 'Latte',
@@ -53,7 +53,7 @@ describe('ProductType API', () => {
         { productTypeId: type.id },
       ]);
 
-      const res = await request(app).get('/products');
+      const res = await request(app).get('/api/products');
 
       expect(res.status).toBe(HTTP_STATUS_CODES.Ok);
       expect(res.body).toHaveLength(1);
@@ -62,7 +62,7 @@ describe('ProductType API', () => {
     });
   });
 
-  describe('POST /products/:id/restock', () => {
+  describe('POST /api/products/:id/restock', () => {
     it('restocks a product type by creating products', async () => {
       const type = await ProductTypeModel.create({
         name: 'Espresso',
@@ -71,7 +71,7 @@ describe('ProductType API', () => {
       });
 
       const res = await request(app)
-        .post(`/products/${type.id}/restock`)
+        .post(`/api/products/${type.id}/restock`)
         .send({ amount: 5 });
 
       expect(res.status).toBe(HTTP_STATUS_CODES.Ok);
@@ -91,14 +91,14 @@ describe('ProductType API', () => {
       });
 
       const res = await request(app)
-        .post(`/products/${type.id}/restock`)
+        .post(`/api/products/${type.id}/restock`)
         .send({ amount: -3 });
 
       expect(res.status).toBe(HTTP_STATUS_CODES.BadRequest);
     });
   });
 
-  describe('POST /products/:id/sell', () => {
+  describe('POST /api/products/:id/sell', () => {
     it('sells products by deleting instances', async () => {
       const type = await ProductTypeModel.create({
         name: 'Americano',
@@ -113,7 +113,7 @@ describe('ProductType API', () => {
       ]);
 
       const res = await request(app)
-        .post(`/products/${type.id}/sell`)
+        .post(`/api/products/${type.id}/sell`)
         .send({ amount: 2 });
 
       expect(res.status).toBe(HTTP_STATUS_CODES.Ok);
@@ -138,7 +138,7 @@ describe('ProductType API', () => {
       ]);
 
       const res = await request(app)
-        .post(`/products/${type.id}/sell`)
+        .post(`/api/products/${type.id}/sell`)
         .send({ amount: 10 });
 
       expect(res.status).toBe(HTTP_STATUS_CODES.BadRequest);

@@ -35,7 +35,7 @@ const startServer = async () => {
       logger.info('MongoDB connected successfully');
     } catch (err: unknown) {
       logger.err('MongoDB connection failed:');
-      console.error(err);
+      logger.err(err);
       throw err; // Stop startup if DB fails
     }
 
@@ -46,14 +46,14 @@ const startServer = async () => {
       logger.info('Kafka consumer started successfully');
     } catch (err: unknown) {
       logger.err('Kafka consumer failed to start:');
-      console.error(err);
+      logger.err(err);
       throw err; // Stop startup if consumer fails
     }
 
     logger.info(SERVER_START_MSG);
   } catch (err: unknown) {
     logger.err('Server startup failed:');
-    console.error(err);
+    logger.err(err);
   }
 };
 

@@ -3,7 +3,7 @@ import { ProductTypeModel } from '@src/models/ProductType';
 import { ProductModel } from '@src/models/Product';
 
 interface StockAggregationResult {
-  _id: string;
+  _id: unknown; // ObjectId
   available: number;
 }
 
@@ -18,7 +18,7 @@ export const getProductTypes = async () => {
   ]);
 
   const stockMap = new Map<string, number>(
-    stock.map(s => [s._id, s.available]),
+    stock.map(s => [String(s._id), s.available]),
   );
 
   const types = await ProductTypeModel.find().lean();

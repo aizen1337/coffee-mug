@@ -14,7 +14,7 @@ export const createOrder = async (input: CreateOrderInput) => {
   }
 
   const totalPrice = calculateFinalOrderPrice(input.items, {
-    location: input.customer.location,
+    location: input.location,
     orderDate: new Date(),
   });
 

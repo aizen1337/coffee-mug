@@ -1,13 +1,15 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { OrderModel } from '@src/models/Order';
-import { startStockUpdatedConsumer } from '@src/consumers/stockUpdated';
-import { startOrderRejectedConsumer } from '@src/consumers/OrderRejected';
-import { consumer } from './kafka.mock';
+import { producer, consumer, startStockUpdatedConsumer, startOrderRejectedConsumer } from './kafka';
 
 describe('Kafka Consumers', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     await OrderModel.deleteMany({});
+    await producer.disconnect();
+    await consumer.disconnect();
+    await consumer.connect();
+    await producer.connect();
   });
 
   it('approves order on stock.updated', async () => {
@@ -19,8 +21,13 @@ describe('Kafka Consumers', () => {
 
     await startStockUpdatedConsumer();
 
-    await consumer.__emit({
-      orderId: order.id,
+    await producer.send({
+      topic: 'stock.updated',
+      messages: [
+        {
+          value: JSON.stringify({ orderId: order.id }),
+        },
+      ],
     });
 
     const updated = await OrderModel.findById(order.id);
@@ -36,8 +43,13 @@ describe('Kafka Consumers', () => {
 
     await startOrderRejectedConsumer();
 
-    await consumer.__emit({
-      orderId: order.id,
+    await producer.send({
+      topic: 'order.rejected',
+      messages: [
+        {
+          value: JSON.stringify({ orderId: order.id }),
+        },
+      ],
     });
 
     const updated = await OrderModel.findById(order.id);

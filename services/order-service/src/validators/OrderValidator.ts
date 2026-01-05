@@ -7,9 +7,15 @@ import HTTP_STATUS_CODES from '@src/common/constants/HTTP_STATUS_CODES';
 const orderItemSchema = Joi.object({
   productId: Joi.string().trim().required(),
   quantity: Joi.number().integer().positive().required(),
+  unitPrice: Joi.number().positive().required(),
+  category: Joi.string().trim().required(),
 });
 
 const createOrderSchema = Joi.object({
+  customer: Joi.string().trim().required(),
+  location: Joi.string()
+    .valid('US', 'EU', 'ASIA')
+    .required(),
   items: Joi.array()
     .items(orderItemSchema)
     .min(1)

@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { OrderModel } from '@src/models/Order';
-import { producer, consumer, startStockUpdatedConsumer, startOrderRejectedConsumer } from './kafka';
+import { producer, consumer} from '@src/lib/kafka';
+import { startStockUpdatedConsumer } from '@src/consumers/stockUpdated';
+import { startOrderRejectedConsumer } from '@src/consumers/OrderRejected';
 
 describe('Kafka Consumers', () => {
   beforeEach(async () => {

@@ -7,6 +7,9 @@ const config = defineConfig({
     environment: 'node',
     setupFiles: ['config.ts', './tests/setup.ts'],
     isolate: true,
+    env: {
+      "NODE_ENV": 'development'
+    }
   },
   resolve: {
     alias: {

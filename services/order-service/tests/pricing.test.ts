@@ -33,7 +33,7 @@ describe('Pricing Engine', () => {
       ],
       {
         location: 'EU',
-        orderDate: new Date('2025-01-01'),
+        orderDate: new Date('2025-01-03'),
       },
     );
 

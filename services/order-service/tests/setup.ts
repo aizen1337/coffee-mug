@@ -3,8 +3,7 @@ import { beforeAll, afterAll, afterEach } from 'vitest';
 
 beforeAll(async () => {
   await mongoose.connect(
-    process.env.MONGODB_URI ??
-      'mongodb://127.0.0.1:27018/order_service_test',
+      'mongodb://127.0.0.1:27108/order_db',
     {
       serverSelectionTimeoutMS: 5_000,
     }

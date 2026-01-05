@@ -1,11 +1,11 @@
-version: '3.9'
+version: "3.9"
 
 services:
   zookeeper:
     container_name: coffee_zookeeper_dev
     image: confluentinc/cp-zookeeper:7.6.0
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2182
+      ZOOKEEPER_CLIENT_PORT: 2181
 
   kafka:
     image: confluentinc/cp-kafka:7.6.0
@@ -21,10 +21,11 @@ services:
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-
   product-service:
     container_name: product_service_dev
-    build: ./services/product-service
+    build:
+      context: ./services/product-service/
+      dockerfile: Dockerfile.dev
     ports:
       - "1337:1337"
     env_file:
@@ -40,13 +41,15 @@ services:
     image: mongo:7
     container_name: product_db_dev
     ports:
-      - "27107:27108"
+      - "27107:27017"
     volumes:
       - product-db-data:/data/db
 
   order-service:
     container_name: order-service_dev
-    build: ./services/order-service
+    build:
+      context: ./services/order-service/
+      dockerfile: Dockerfile.dev
     ports:
       - "1338:1338"
     env_file:
@@ -62,7 +65,7 @@ services:
     container_name: order-db_dev
     image: mongo:7
     ports:
-      - "27108:27109"
+      - "27108:27017"
     volumes:
       - order-db-data:/data/db
 
